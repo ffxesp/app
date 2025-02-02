@@ -12,7 +12,7 @@ function showQR() {
         return;
     }
 
-    const upiId = 'createprincemahto-2@okaxis';
+    const upiId = '8423848236@fam';
     const upiLink = `upi://pay?pa=${upiId}&am=${amount}&cu=INR`;
 
     const qr = qrcode(0, 'M');
