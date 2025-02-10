@@ -1,0 +1,71 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="loader.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://kit.fontawesome.com/8aa17a250d.js" crossorigin="anonymous"></script>
+<style>
+    #loader { width: 100%; justify-content: center; align-items: center; display: flex;}
+    .loader { display: none; }
+    .app-card > img { width: 50px; height: 50px; border-radius: 12px;}
+    .header { justify-content: center;}
+    .app-card { display: flex; gap: 10px; margin: 20px 20px 0px 20px; border-radius: 12px; padding: 10px; background: #022952;}
+    .copy-btn { background: transparent; border: none; font-size: 20px;}
+    .make { text-align: center; background: #024f55; padding: 6px;}
+    a { display: flex; position: fixed; background: #008000; width: 50px; height: 50px; bottom: 20px; right: 20px; align-items: center; justify-content: center; color: #ffffff; border-radius: 125px; font-size: 26px; }
+    a > i { display: flex; align-items: center; justify-self: center; }
+</style>
+<div class="header">
+    <h2>App List</h2>
+</div>
+<div class="make">
+    <p>Make Sure Record Video When Download</p>
+</div>
+<div class="container">
+    <div id="appList"></div>
+</div>
+<a href="https://wa.me/918423848236"><i class="fa-brands fa-whatsapp"></i></a>
+<div id="loader">
+    <div class="loader"></div>
+</div>
+<script>
+    $(document).ready(function() {
+        $(".loader").show();
+        
+        fetch("https://script.google.com/macros/s/AKfycbyCJ6wPSYmBfz9EI9Uo9sCZQOlQZkF88yvEaxd0MZkFyn3A9FFnJhb88LmLQewuDamg/exec")
+        .then(response => response.json())
+        .then(data => {
+            $(".loader").hide();
+            if (data.length === 0) {
+                $("#appList").html("<p>No apps available.</p>");
+                return;
+            }
+
+            data.forEach(app => {
+                $("#appList").append(`
+                    <div class="app-card" onclick="window.location.href='${app.url}'">
+                        <img class="app-image" src="${app.image}" alt="App">
+                        <div class="app-info">
+                            <p><strong>${app.name}</strong></p>
+                            <div class="referral">
+                                <span>${app.referral}</span>
+                                <button class="copy-btn" onclick="copyText(event, '${app.referral}')">📋</button>
+                            </div>
+                        </div>
+                    </div>
+                `);
+            });
+        })
+        .catch(() => {
+            $(".loader").hide();
+            $("#appList").html("<p style='color: red;'>Error fetching data.</p>");
+        });
+    });
+
+    function copyText(event, text) {
+        event.stopPropagation();
+        navigator.clipboard.writeText(text).then(() => {
+            alert("Referral code copied!");
+        });
+    }
+</script>
