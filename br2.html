@@ -40,11 +40,13 @@
 </div>
 
 <!-- Hidden form for game username -->
-<div id="gameUsernameForm" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #04365f; padding: 20px; border-radius: 8px; width: 77%; ">
-    <h3>Enter Game Username</h3>
-    <input type="text" id="gameUsername" placeholder="Game Username" style="width: 100%; padding: 10px; margin: 10px 0; background: #dddddd; border: none; outline: none; border-radius: 25px; ">
+<div id="gameUsernameForm" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #04365f; padding: 20px; border-radius: 8px; width: 77%;">
+    <h3>Enter Details</h3>
+    <input type="text" id="teamName" placeholder="Team Name" style="width: 100%; padding: 10px; margin: 10px 0; background: #dddddd; border: none; outline: none; border-radius: 25px;">
+    <input type="text" id="firstPlayerName" placeholder="First Player Name" style="width: 100%; padding: 10px; margin: 10px 0; background: #dddddd; border: none; outline: none; border-radius: 25px;">
+    <input type="text" id="secondPlayerName" placeholder="Second Player Name" style="width: 100%; padding: 10px; margin: 10px 0; background: #dddddd; border: none; outline: none; border-radius: 25px;">
     <button onclick="submitGameUsername()" style="padding: 10px; background: #00a9a9; color: #fff; border: none; cursor: pointer; border-radius: 25px; width: 100px;">Submit</button>
-    <button onclick="closeForm()" style="padding: 10px; background: #ff4d4d; color: #fff; border: none; cursor: pointer; border-radius: 25px; margin-left: 10px; width : 100px;">Cancel</button>
+    <button onclick="closeForm()" style="padding: 10px; background: #ff4d4d; color: #fff; border: none; cursor: pointer; border-radius: 25px; margin-left: 10px; width: 100px;">Cancel</button>
 </div>
 
 <script>
@@ -55,7 +57,7 @@ async function fetchTournaments() {
     document.getElementById('loader').style.display = 'flex'; // Show loader
 
     try {
-        const response = await fetch(`https://script.google.com/macros/s/AKfycbyeb3mZoO7DiOI-5xjARidztzRWOuen3aGbWr4Ehs9KAHvftN_kgKQ_Zn8rsmn2Rr_m/exec`, {
+        const response = await fetch(`https://script.google.com/macros/s/AKfycbznM8herdEU8GMYZwTNleoJoCPU-IZn4SrjeejnZD_pA-aefP_6uzizID2aFzF94UE/exec`, {
             method: 'GET'
         });
 
@@ -143,7 +145,7 @@ async function submitGameUsername() {
     submitButton.textContent = "Joining...";
 
     try {
-        const response = await fetch(`https://script.google.com/macros/s/AKfycbyeb3mZoO7DiOI-5xjARidztzRWOuen3aGbWr4Ehs9KAHvftN_kgKQ_Zn8rsmn2Rr_m/exec`, {
+        const response = await fetch(`https://script.google.com/macros/s/AKfycbznM8herdEU8GMYZwTNleoJoCPU-IZn4SrjeejnZD_pA-aefP_6uzizID2aFzF94UE/exec`, {
             method: 'POST',
             body: JSON.stringify({
                 action: 'join',
