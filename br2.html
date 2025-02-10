@@ -23,8 +23,8 @@
     #loader { align-items: center; justify-content: center; height: 80vh; }
     .top-btn { display: flex; align-items: center; justify-content: space-around; margin: 10px 0px; }
     .top-btn > a { color: #fff; text-decoration: none; padding: 2px; font-size: 20px; background: #0000; width: 80px; border: 1px solid #ff0000; border-radius: 125px; text-align: center; }
+    .input-field { width: 100%; padding: 10px; margin: 10px 0; background: #dddddd; border: none; outline: none; border-radius: 25px; }
 </style>
-<link rel="stylesheet" type="text/css" href="loader.css">
 <div class="header">
     <img src="https://i.ibb.co/84LXzqQY/icon.jpg" class="image">
     <h2>FF CUP</h2>
@@ -39,45 +39,40 @@
     <div class="loader"></div>
 </div>
 
-<!-- Hidden form for game username -->
 <div id="gameUsernameForm" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #04365f; padding: 20px; border-radius: 8px; width: 77%;">
-    <h3>Enter Details</h3>
-    <input type="text" id="teamName" placeholder="Team Name" style="width: 100%; padding: 10px; margin: 10px 0; background: #dddddd; border: none; outline: none; border-radius: 25px;">
-    <input type="text" id="firstPlayerName" placeholder="First Player Name" style="width: 100%; padding: 10px; margin: 10px 0; background: #dddddd; border: none; outline: none; border-radius: 25px;">
-    <input type="text" id="secondPlayerName" placeholder="Second Player Name" style="width: 100%; padding: 10px; margin: 10px 0; background: #dddddd; border: none; outline: none; border-radius: 25px;">
+    <h3>Enter Team Details</h3>
+    <input type="text" id="teamName" placeholder="Team Name" class="input-field">
+    <input type="text" id="firstPlayer" placeholder="First Player Name" class="input-field">
+    <input type="text" id="secondPlayer" placeholder="Second Player Name" class="input-field">
     <button onclick="submitGameUsername()" style="padding: 10px; background: #00a9a9; color: #fff; border: none; cursor: pointer; border-radius: 25px; width: 100px;">Submit</button>
     <button onclick="closeForm()" style="padding: 10px; background: #ff4d4d; color: #fff; border: none; cursor: pointer; border-radius: 25px; margin-left: 10px; width: 100px;">Cancel</button>
 </div>
 
 <script>
-    let selectedTournament = null;
+let selectedTournament = null;
 let selectedButton = null;
 
 async function fetchTournaments() {
-    document.getElementById('loader').style.display = 'flex'; // Show loader
-
+    document.getElementById('loader').style.display = 'flex';
     try {
-        const response = await fetch(`https://script.google.com/macros/s/AKfycbznM8herdEU8GMYZwTNleoJoCPU-IZn4SrjeejnZD_pA-aefP_6uzizID2aFzF94UE/exec`, {
+        const response = await fetch(`https://script.google.com/macros/s/AKfycbzbGEFDZNBac7SjRYmBlzIllTXrnUJ9cntnDuokGy9jFpvbuddPV0WrHr5_OdA7TlND/exec`, {
             method: 'GET'
         });
-
         const data = await response.json();
         displayTournaments(data);
     } catch (error) {
         console.error('Error fetching tournaments:', error);
     } finally {
-        document.getElementById('loader').style.display = 'none'; // Hide loader after fetching
+        document.getElementById('loader').style.display = 'none';
     }
 }
 
 function displayTournaments(tournaments) {
     const container = document.getElementById('tournamentContainer');
     container.innerHTML = '';
-
     tournaments.forEach(tournament => {
         const card = createTournamentCard(tournament);
         container.appendChild(card);
-
         if (localStorage.getItem(`joined-${tournament.title}`)) {
             const joinButton = document.getElementById(`joinBtn-${tournament.title}`);
             joinButton.disabled = true;
@@ -113,10 +108,8 @@ function openForm(tournamentTitle, slots, price, button) {
         alert('No slots available!');
         return;
     }
-
     selectedTournament = { title: tournamentTitle, price: price };
     selectedButton = button;
-
     document.getElementById('gameUsernameForm').style.display = 'block';
 }
 
@@ -125,10 +118,12 @@ function closeForm() {
 }
 
 async function submitGameUsername() {
-    const gameUsername = document.getElementById('gameUsername').value;
+    const teamName = document.getElementById('teamName').value;
+    const firstPlayer = document.getElementById('firstPlayer').value;
+    const secondPlayer = document.getElementById('secondPlayer').value;
 
-    if (!gameUsername) {
-        alert('Please enter your game username!');
+    if (!teamName || !firstPlayer || !secondPlayer) {
+        alert('Please fill in all fields!');
         return;
     }
 
@@ -138,21 +133,22 @@ async function submitGameUsername() {
         return;
     }
 
-    // Show the loader and disable submit button
     document.getElementById('loader').style.display = 'flex';
     const submitButton = document.querySelector('#gameUsernameForm button:first-of-type');
     submitButton.disabled = true;
     submitButton.textContent = "Joining...";
 
     try {
-        const response = await fetch(`https://script.google.com/macros/s/AKfycbznM8herdEU8GMYZwTNleoJoCPU-IZn4SrjeejnZD_pA-aefP_6uzizID2aFzF94UE/exec`, {
+        const response = await fetch(`https://script.google.com/macros/s/AKfycbzbGEFDZNBac7SjRYmBlzIllTXrnUJ9cntnDuokGy9jFpvbuddPV0WrHr5_OdA7TlND/exec`, {
             method: 'POST',
             body: JSON.stringify({
                 action: 'join',
                 username: username,
                 tournament: selectedTournament.title,
                 price: selectedTournament.price,
-                gameUsername: gameUsername
+                teamName: teamName,
+                firstPlayer: firstPlayer,
+                secondPlayer: secondPlayer
             })
         });
 
@@ -162,7 +158,11 @@ async function submitGameUsername() {
             alert('Registration successful! Details have been sent to your email.');
             selectedButton.disabled = true;
             selectedButton.textContent = 'Joined';
-            localStorage.setItem(`joined-${selectedTournament.title}`, JSON.stringify({ gameUsername: gameUsername }));
+            localStorage.setItem(`joined-${selectedTournament.title}`, JSON.stringify({
+                teamName: teamName,
+                firstPlayer: firstPlayer,
+                secondPlayer: secondPlayer
+            }));
         } else {
             alert(result.message || 'Registration failed. Please try again.');
         }
@@ -170,15 +170,12 @@ async function submitGameUsername() {
         console.error('Error during registration:', error);
         alert('An error occurred during registration. Please try again.');
     } finally {
-        // Hide the loader and reset the button
         document.getElementById('loader').style.display = 'none';
         submitButton.disabled = false;
         submitButton.textContent = "Submit";
-
         closeForm();
     }
 }
 
-// Fetch tournaments when the page loads
 fetchTournaments();
 </script>
